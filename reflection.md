@@ -92,10 +92,15 @@ UML:
 
 - What part of this project are you most satisfied with?
 
+    The fact That I was able to start from scratch and build something that was working and I could actually understand.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+    i would make the website look more unique and add more visuals as well.
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+    I learned that taking things one step at a time is great.
