@@ -5,7 +5,18 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+3 tasks it can do are enter owner/pet info, add/edit tasks, and generate/view a daily plan. 
+
+UML:
+    Owner class holds pet info and availible time, and passes tasks to a Scheduler that applies priority and time contrsaints. The sceduler will output a daily plan and an ordered talk list and plain language reasoning for each choice. 
+
+
 - What classes did you include, and what responsibilities did you assign to each?
+    Owner: profile and time budget
+    Pet: stores species and prefrences.
+    Task: holds title duration and priority
+    Scheduler: selects and orders tasks into a Dailyplan with reason
+
 
 **b. Design changes**
 
