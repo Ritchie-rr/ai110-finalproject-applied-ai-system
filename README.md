@@ -315,3 +315,14 @@ pytest -m "not api" -v
 | `python-dotenv` | Load API key from `.env` |
 | `pandas` | Table display |
 | `pytest` | Unit and reliability testing |
+
+---
+
+## Portfolio Reflection
+
+This project shows that I approach AI engineering the same way I approach any real problem. I start with what actually needs to work, not what looks impressive, prioritizing practicality.  When the AI reviewer was penalizing schedules for things the user never mentioned, I didn't accept it, I diagnosed the prompt, identified the exact rule that was causing the bad behavior, and rewrote it with a clear boundary. Every problem in this project had a real cause and a real fix, and I found both.
+
+What this project says about me as an AI engineer is that I treat AI as a tool with failure modes, not magic. I built fallbacks for when the API goes down, retry logic for rate limits, error messages that surface the actual reason something failed so that I could learn from the errors and make fixes. I also made deliberate decisions about where AI belongs and where it doesn't: the scheduling logic stays deterministic so the app works without an internet connection, and the AI is layered on top to add reasoning and natural language, not to replace something that was already reliable.
+
+## Video of Explanation
+https://www.loom.com/share/03a8311dfb8549529ab3bd8d045e967d
