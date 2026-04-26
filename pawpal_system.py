@@ -60,6 +60,17 @@ class Task:
         """Mark this task as not completed."""
         self.completion_status = False
 
+    def to_dict(self) -> dict:
+        """Serialize to a plain dict for passing to the AI planner."""
+        return {
+            "title": self.title,
+            "duration": self.duration,
+            "priority": self.priority,
+            "frequency": self.frequency,
+            "completed": self.completion_status,
+            "notes": self.notes,
+        }
+
     def __repr__(self) -> str:
         status = "✓" if self.completion_status else "○"
         return f"{status} {self.title} ({self.duration}min) [{self.priority}]"
