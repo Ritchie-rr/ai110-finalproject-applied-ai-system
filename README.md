@@ -4,7 +4,9 @@
 
 ## Original Project
 
-PawPal+ began as a Module 2 project called **PawPal+ (Pet Care Scheduler)**. Its original goal was to help busy pet owners manage daily care tasks across one or more pets by letting them manually enter tasks with a title, duration, priority, and frequency, and then generate an optimized daily schedule using a greedy algorithm that fit high-priority tasks first within whatever time the owner had available that day. The original system also included conflict detection, recurring due-date tracking, and plain-text scheduling explanations — but had no AI and required owners to fill out a form for every task.
+PawPal+ started as a Module 2 project focused on helping busy pet owners manage care tasks for multiple pets. Users could manually enter tasks with details like title, duration, priority, and frequency. The system then used a greedy algorithm to generate an optimized daily schedule, fitting in high-priority tasks first based on the owner's available time.
+
+The original system featured conflict detection, recurring due-date tracking, and plain-text scheduling explanations. However, it lacked AI capabilities and required users to manually fill out a form for every single task.
 
 ---
 
@@ -12,7 +14,9 @@ PawPal+ began as a Module 2 project called **PawPal+ (Pet Care Scheduler)**. Its
 
 **PawPal+ — AI-Powered Pet Care Scheduler**
 
-PawPal+ helps busy pet owners plan their day by turning a plain-English description of their pet's needs into a structured, prioritized care schedule — and then having the AI review its own plan for problems. It supports any number of pets and adapts to however much time the owner actually has that day (10 minutes or 8 hours — the owner sets it). It matters because pet care is easy to forget or mismanage when life gets busy, and this system removes the friction of manual data entry while adding an intelligent layer that catches mistakes a simple algorithm would miss, like scheduling only one feeding session for a dog that needs two.
+PawPal+ helps busy pet owners plan their day by turning a plain-English description of their pet's needs into a structured, prioritized care schedule. Once the schedule is made, the AI reviews its own plan to catch any potential problems. It supports any number of pets and adapts to the owner's actual available time, whether they have 10 minutes or 8 hours to spare.
+
+This matters because pet care is easy to forget or mismanage when life gets busy. This system removes the friction of manual data entry while adding an intelligent layer that catches mistakes a simple algorithm would miss, such as scheduling only one feeding session for a dog that needs two.
 
 ---
 
@@ -20,9 +24,9 @@ PawPal+ helps busy pet owners plan their day by turning a plain-English descript
 
 The system has two parallel workflows that share the same data store:
 
-**Manual workflow** — the owner fills out a form to add tasks, then clicks a button to run the deterministic greedy scheduler built in `pawpal_system.py`. This path requires no API key and always works.
+**Manual workflow** — The owner fills out a form to add tasks and clicks a button to run the deterministic greedy scheduler built in `pawpal_system.py.` This path requires no API key and always works.
 
-**AI workflow** — the owner describes their pet's needs in plain English. That text goes to Gemini (via a direct REST call in `ai_planner.py`), which extracts structured task objects. The owner reviews and confirms them, then Gemini generates an ordered schedule with natural-language reasoning. Finally, Gemini reviews its own schedule — scoring it, flagging issues, and suggesting improvements. This three-step loop (parse → schedule → self-review) is the agentic part.
+**AI workflow** —The owner describes their pet's needs in plain English. That text goes to Gemini via a direct REST call in `ai_planner.py`, which extracts structured task objects. The owner reviews and confirms them, and then Gemini generates an ordered schedule with natural-language reasoning. Finally, Gemini reviews its own schedule to score it, flag issues, and suggest improvements. This three-step loop of parsing, scheduling, and self-reviewing makes the system agentic.
 
 The full diagram lives in `SYSTEM_DIAGRAM.md`.
 
@@ -42,13 +46,13 @@ The full diagram lives in `SYSTEM_DIAGRAM.md`.
 PawPal+ adds three AI-powered steps on top of the manual workflow:
 
 **Step 1 — Natural language task entry**
-The owner types a plain-English description of what their pet needs. Gemini reads it and extracts a structured list of tasks — with estimated durations, inferred priorities, and correct frequencies — that the owner can review and confirm before they are added to the task list.
+The owner types a plain-English description of what their pet needs. Gemini reads it and extracts a structured list of tasks, including estimated durations, inferred priorities, and correct frequencies. The owner can then review and confirm these tasks before they are added to the list.
 
 **Step 2 — AI-generated schedule**
-Gemini produces an ordered daily plan with a natural-language explanation of why tasks were ordered the way they were, practical pet-care advice for the day, and warnings about anything that looks problematic.
+Gemini produces an ordered daily plan with a natural-language explanation of why tasks were ordered the way they were. It also provides practical pet-care advice for the day and includes warnings about anything that looks problematic.
 
 **Step 3 — Agentic self-review**
-Gemini reviews its own output. It scores the schedule from 1–10, flags issues like missed feedings or health gaps, and suggests concrete improvements. This is what makes the workflow agentic — the AI checks its own work without being asked to by the user.
+Gemini reviews its own output. It scores the schedule from 1-10, flags issues like missed feedings or health gaps, and suggests concrete improvements. This creates an agentic workflow where the AI checks its own work without needing a prompt from the user.
 
 ---
 
@@ -201,7 +205,7 @@ An early version of the review prompt penalized the schedule for things the owne
 Gemini has a free REST API with no SDK required. Using the REST API directly (via `requests`) avoided a DLL compatibility issue with the Gemini Python SDK on Windows, making the app work on more machines without setup headaches.
 
 **Why keep the manual scheduler alongside the AI?**
-The greedy algorithm in `pawpal_system.py` is a reliable fallback that works with no API key and no internet connection. It also makes the AI's value clear by contrast — you can run both and compare the reasoning quality.
+The greedy algorithm in `pawpal_system.py` is a reliable fallback that works with no API key and no internet connection. It also makes the AI's value clear by contrast. You can run both and compare the reasoning quality.
 
 **Why a three-step agentic loop instead of one big prompt?**
 Splitting parse, schedule, and review into three separate calls means each prompt is focused and the JSON outputs are small and predictable. One large prompt asking Gemini to do all three at once would produce less reliable structured output and be harder to debug.
