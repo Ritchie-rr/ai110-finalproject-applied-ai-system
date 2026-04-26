@@ -32,7 +32,7 @@ def smoke_result():
     Makes exactly ONE call to the Gemini API.
     All tests in this file receive the same result — no extra calls.
     """
-    tasks = parse_tasks_from_text(
+    tasks, _err = parse_tasks_from_text(
         "My dog Max needs a 20-minute walk every day and his flea medicine once a month.",
         pet_name="Max",
     )

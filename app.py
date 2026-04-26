@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import streamlit as st
 from pawpal_system import Task, Pet, Owner, Scheduler, DailyPlan, Priority, Frequency
 from datetime import date
@@ -20,6 +22,8 @@ if "ai_schedule_result" not in st.session_state:
     st.session_state.ai_schedule_result = None
 if "ai_review_result" not in st.session_state:
     st.session_state.ai_review_result = None
+if "demo_nl" not in st.session_state:
+    st.session_state.demo_nl = ""
 
 # ── Shared: Owner & Pet setup (used by both tabs) ────────────────────────────
 st.subheader("Owner & Pet Info")
@@ -279,20 +283,53 @@ with tab_ai:
     else:
         from ai_planner import parse_tasks_from_text, generate_ai_schedule, review_schedule
 
+        # ── Demo loader ──────────────────────────────────────────────────────
+        DEMO_NL = (
+            "Bruno is a 3-year-old golden retriever who needs a 30-minute walk every morning — "
+            "that's the most important part of his day. He also eats twice a day (breakfast and dinner), "
+            "which takes about 5 minutes each time. Once a week he needs a full bath and brush-out, "
+            "which takes around 45 minutes. His flea and tick medicine is monthly and only takes 2 minutes "
+            "to apply, but it's really important not to forget it. He also loves a 15-minute play session "
+            "with his ball in the backyard every day — low priority but good for his mood."
+        )
+
+        with st.expander("🎯 Load Demo — see the full agentic flow with one click"):
+            st.caption(
+                "Loads a pre-built scenario: owner Alex, dog Bruno, 90-minute time budget "
+                "(just a demo default — you can change it to any amount of time). "
+                "Supports multiple pets; add more after saving the first."
+            )
+            if st.button("Load Demo Data", use_container_width=True):
+                demo_pet = Pet(name="Bruno", species="dog")
+                demo_owner = Owner(name="Alex", time_available=90)
+                demo_owner.add_pet(demo_pet)
+                st.session_state.owner = demo_owner
+                st.session_state.pet = demo_pet
+                st.session_state.plan = None
+                st.session_state.ai_parsed_tasks = []
+                st.session_state.ai_schedule_result = None
+                st.session_state.ai_review_result = None
+                st.session_state.demo_nl = DEMO_NL
+                st.success("Demo loaded! Owner: Alex · Pet: Bruno (dog) · 90 min budget. Now follow Steps 1–3 below.")
+
+        st.divider()
+
         if st.session_state.owner is None:
-            st.info("Set up an owner and pet above first, then come back here.")
+            st.info("Set up an owner and pet above first, or load the demo above.")
         else:
             # ── Step 1: Natural language task entry ──────────────────────────
             st.subheader("Step 1 — Describe your pet's tasks")
             st.caption(
-                "Type naturally — Claude will extract structured tasks for you. "
+                "Type naturally — Gemini will extract structured tasks for you. "
                 "Example: *'Max needs a 30-min walk daily and a bath every week. "
                 "He takes heartworm medicine monthly — that's important.'*"
             )
 
+            default_nl = st.session_state.get("demo_nl", "")
             nl_input = st.text_area(
                 "What care does your pet need?",
-                height=100,
+                value=default_nl,
+                height=120,
                 placeholder="Describe tasks in plain English...",
             )
 
@@ -300,15 +337,15 @@ with tab_ai:
                 if not nl_input.strip():
                     st.warning("Enter a description first.")
                 else:
-                    with st.spinner("Claude is reading your description..."):
-                        parsed = parse_tasks_from_text(
+                    with st.spinner("Gemini is reading your description..."):
+                        parsed, parse_error = parse_tasks_from_text(
                             nl_input, st.session_state.pet.name
                         )
                     if parsed:
                         st.session_state.ai_parsed_tasks = parsed
                         st.success(f"Found {len(parsed)} task(s). Review them below.")
                     else:
-                        st.error("Could not extract tasks. Try rephrasing your description.")
+                        st.error(f"Could not extract tasks. Reason: {parse_error}")
 
             # Show parsed tasks for review before adding
             if st.session_state.ai_parsed_tasks:
